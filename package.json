@@ -10,7 +10,7 @@
   "scripts": {
     "build": "rollup -c",
     "pretest": "npm run build",
-    "test": "mocha test/*.js --compilers js:buble/register",
+    "test": "mocha",
     "prepublish": "npm test"
   },
   "repository": {
@@ -19,7 +19,7 @@
   },
   "keywords": [
     "rollup",
-    "plugin",
+    "rollup-plugin",
     "minify",
     "uglify"
   ],
@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/futurist/rollup-plugin-minify#readme",
   "devDependencies": {
-    "buble": "^0.14.0",
     "mocha": "^3.1.2",
     "rollup": "^0.36.3",
     "rollup-plugin-buble": "^0.14.0"

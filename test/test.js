@@ -1,55 +1,50 @@
 const assert  = require('assert')
-const path  = require('path')
-const lib = require('../')
 const { format:f } = require('util')
 const { exec } = require('child_process')
 const { join } = require('path')
-const { mkdir, readFileSync, writeFileSync } = require('fs')
+const { readFileSync, unlinkSync } = require('fs')
 const { rollup } = require('rollup')
 const { minify } = require('uglify-js')
+const lib = require('../')
 
-const uglifyBin = join(__dirname, '../node_modules/.bin/uglifyjs')
 const base = join(__dirname, './fixtures/')
 process.chdir(base)
 
-function compareFile(file1, file2) {
-  assert.equal(readFileSync(file1, 'utf8'), readFileSync(file2, 'utf8'))
+function compareFile(file, str) {
+  assert.equal(readFileSync(file, 'utf8'), str)
 }
 
-function testResult(file, out, target, done) {
-  var outPath = path.parse(out)
-  mkdir(outPath.dir, err=>err)
-  // uglify first
-  exec(f(
-    `node %s %s -c -m -o %s --source-map %s --source-map-root %s`,
-    uglifyBin,
-    file,
-    out,
-    outPath.base+'.map',
-    outPath.dir
-  ), {cwd: base}, err => {
-    if(err) done(err)
-    compareFile(out, target)
-    compareFile(out+'.map', target+'.map')
-    done()
-  })
+function testResult(source, target, done) {
+  var result = minify(
+    readFileSync(source, 'utf8'),
+    {
+      fromString:true,
+      outSourceMap: target+'.map'
+    }
+  )
+  compareFile(target, result.code)
+  compareFile(target+'.map', result.map)
+  unlinkSync(source)
+  unlinkSync(target)
+  unlinkSync(target+'.map')
+  done()
 }
 
 const entry = 'unminified.js'
 
 describe('test', function () {
   this.timeout(15000)
-  it('should minified with min.js', done => {
-    return rollup({
+  it('should minified with min.js', function (done) {
+    rollup({
       entry: entry,
       plugins: [lib({iife: 'min.js'})],
-    }).then(bundle => {
-      bundle.generate({
+    }).then(function(bundle) {
+      bundle.write({
         format: 'iife',
-        useStrict: false
+        dest: 'iife.js'
+      }).then(function() {
+        testResult('iife.js', 'min.js', done)
       })
-      testResult(entry, 'out/min.js', 'min.js', done)
     })
-
   })
 })
