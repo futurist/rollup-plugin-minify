@@ -1,5 +1,5 @@
 import mkdirp from 'mkdirp';
-import { parse } from 'path';
+import path from 'path';
 import { writeFileSync } from 'fs';
 import { minify } from 'uglify-js';
 
@@ -14,7 +14,7 @@ function rollup_plugin_minify (minifyMap) {
           opt = typeof opt == 'string' ? {dest: opt} : opt;
           var dest = opt.dest;
           if (!dest) { return console.error('no dest, the minify plugin will abort for', format) }
-          var destObj = parse(dest);
+          var destObj = path.parse(dest);
 
           // prepare opt
           delete opt.dest;
@@ -26,7 +26,7 @@ function rollup_plugin_minify (minifyMap) {
           mkdirp.sync(destObj.dir);
           writeFileSync(dest, result.code, 'utf8');
 
-          if (typeof map == 'string') { writeFileSync(map, result.map, 'utf8'); }
+          if (map) { writeFileSync(path.join(destObj.dir, map), result.map, 'utf8'); }
         }
       });
     }

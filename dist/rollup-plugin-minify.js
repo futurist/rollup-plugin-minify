@@ -3,7 +3,7 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var mkdirp = _interopDefault(require('mkdirp'));
-var path = require('path');
+var path = _interopDefault(require('path'));
 var fs = require('fs');
 var uglifyJs = require('uglify-js');
 
@@ -30,7 +30,7 @@ function rollup_plugin_minify (minifyMap) {
           mkdirp.sync(destObj.dir);
           fs.writeFileSync(dest, result.code, 'utf8');
 
-          if (typeof map == 'string') { fs.writeFileSync(map, result.map, 'utf8'); }
+          if (map) { fs.writeFileSync(path.join(destObj.dir, map), result.map, 'utf8'); }
         }
       });
     }

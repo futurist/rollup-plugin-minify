@@ -1,13 +1,13 @@
 const assert  = require('assert')
 const { format:f } = require('util')
 const { exec } = require('child_process')
-const { join } = require('path')
+const path = require('path')
 const { readFileSync, unlinkSync } = require('fs')
 const { rollup } = require('rollup')
 const { minify } = require('uglify-js')
 const lib = require('../')
 
-const base = join(__dirname, './fixtures/')
+const base = path.join(__dirname, './fixtures/')
 process.chdir(base)
 
 function compareFile(file, str) {
@@ -24,13 +24,16 @@ function testResult(source, opt, target, done) {
 
   if(target) {
     compareFile(target, result.code)
-    if(map) compareFile(map, result.map)
+    let dir = path.parse(target).dir
+    if(map) compareFile(target+'.map', result.map)
   }
 
   // clean up
   unlinkSync(source)
-  if(target) unlinkSync(target)
-  if(map) unlinkSync(map)
+  if(target) {
+    unlinkSync(target)
+    if(map) unlinkSync(target+'.map')
+  }
   done()
 }
 
