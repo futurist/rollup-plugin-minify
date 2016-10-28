@@ -1,7 +1,6 @@
-michine:
+machine:
   node:
-    version:
-      - 6
+    version: 6
 
 test:
   override:
