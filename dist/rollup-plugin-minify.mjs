@@ -9,16 +9,24 @@ function rollup_plugin_minify (minifyMap) {
     transformBundle: function transformBundle (code, option) {
       Object.keys(minifyMap).forEach(function (format) {
         if (option.format == format) {
-          var name = minifyMap[format];
-          var map = name + '.map';
-          var result = minify(code, {
-            fromString: true,
-            outSourceMap: map
-          });
+          // init opt for minify
+          var opt = minifyMap[format];
+          opt = typeof opt=='string' ? {dest: opt} : opt;
+          var dest =  opt.dest;
+          if(!dest) { return console.error('no dest, the minify plugin will abort for', format) }
+
+          // prepare opt
+          delete opt.dest;
+          opt.fromString = true;
+          opt.outSourceMap = opt.outSourceMap || dest + '.map';
+
+          var result = minify(code, opt);
           // ensure the target folder exists
-          mkdirp.sync(parse(name).dir);
-          writeFileSync(name, result.code, 'utf8');
-          writeFileSync(map, result.map, 'utf8');
+          mkdirp.sync(parse(dest).dir);
+          writeFileSync(dest, result.code, 'utf8');
+
+          var sourceMapUrl = opt.sourceMapUrl || opt.outSourceMap;
+          if(typeof sourceMapUrl=='string') { writeFileSync(sourceMapUrl, result.map, 'utf8'); }
         }
       });
     }
