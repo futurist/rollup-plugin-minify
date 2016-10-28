@@ -42,16 +42,17 @@ function testResult(source, opt, target, done) {
  */
 function run(option, uglifyOption, done) {
   const iife = option.iife
-  const dest = typeof iife=='string' ? iife : iife.dest
+  const minifyDest = typeof iife=='string' ? iife : iife.dest
+  const iifeDest = 'dist/iife.js'
   rollup({
     entry: entry,
     plugins: [lib(option)],
   }).then(bundle => {
     bundle.write({
       format: 'iife',
-      dest: 'iife.js'
+      dest: iifeDest
     }).then(() => {
-      testResult('iife.js', uglifyOption, dest, done)
+      testResult(iifeDest, uglifyOption, minifyDest, done)
     }).catch(e=>done(e))
   }).catch(e=>done(e))
 }
@@ -62,7 +63,7 @@ describe('test', function () {
   this.timeout(15000)
 
   it('should minified with min.js', function (done) {
-    run({iife: 'min.js'}, {fromString:true, outSourceMap: 'min.js.map'}, done)
+    run({iife: 'dist/min.js'}, {fromString:true, outSourceMap: 'min.js.map'}, done)
   })
 
   it('should not minified with empty options', function (done) {
