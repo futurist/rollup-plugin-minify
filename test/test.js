@@ -20,17 +20,17 @@ function testResult(source, opt, target, done) {
     opt
   )
 
-  let sourceMapUrl = opt.sourceMapUrl || opt.outSourceMap
+  let map = opt.outSourceMap || target && target+'.map'
 
-  if(target){
+  if(target) {
     compareFile(target, result.code)
-    if(sourceMapUrl) compareFile(target+'.map', result.map)
+    if(map) compareFile(map, result.map)
   }
 
   // clean up
   unlinkSync(source)
   if(target) unlinkSync(target)
-  if(target && sourceMapUrl) unlinkSync(target+'.map')
+  if(map) unlinkSync(map)
   done()
 }
 
@@ -66,18 +66,18 @@ describe('test', function () {
   })
 
   it('should not minified with empty options', function (done) {
-    run({iife: {}}, {fromString:true, outSourceMap: '.map'}, done)
+    run({iife: {}}, {fromString:true, outSourceMap: ''}, done)
   })
 
   it('should not minified with empty string', function (done) {
-    run({iife: ''}, {fromString:true, outSourceMap: '.map'}, done)
+    run({iife: ''}, {fromString:true, outSourceMap: ''}, done)
   })
 
   it('should not minified with uglify options', function (done) {
     run(
       // fromString will always set to true in plugin
-      {iife: {fromString:false, dest:'min.js', warnings: true, mangle: false}},
-      {fromString:true, outSourceMap: 'min.js.map', warnings: true, mangle: false},
+      {iife: {fromString:false, dest:'min.js', sourceMapUrl:'localhost/min.js.map', warnings: true, mangle: false}},
+      {fromString:true, outSourceMap: 'min.js.map', sourceMapUrl:'localhost/min.js.map', warnings: true, mangle: false},
       done
     )
   })

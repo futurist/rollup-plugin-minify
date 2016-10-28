@@ -1,6 +1,8 @@
 # rollup-plugin-minify
 Rollup plugin to minify generated format into new minified file, with source maps, using [uglify-js](https://github.com/mishoo/UglifyJS2).
 
+[![CircleCI](https://circleci.com/gh/futurist/rollup-plugin-minify.svg?style=svg)](https://circleci.com/gh/futurist/rollup-plugin-minify)
+
 ## Install
 
 ``` bash

@@ -18,15 +18,14 @@ export default function rollup_plugin_minify (minifyMap) {
           // prepare opt
           delete opt.dest
           opt.fromString = true
-          opt.outSourceMap = opt.outSourceMap || dest + '.map'
+          let map = opt.outSourceMap = opt.outSourceMap || dest + '.map'
 
           const result = minify(code, opt)
           // ensure the target folder exists
           mkdirp.sync(parseName(dest).dir)
           writeFileSync(dest, result.code, 'utf8')
 
-          let sourceMapUrl = opt.sourceMapUrl || opt.outSourceMap
-          if(typeof sourceMapUrl=='string') writeFileSync(sourceMapUrl, result.map, 'utf8')
+          if(typeof map=='string') writeFileSync(map, result.map, 'utf8')
         }
       })
     }

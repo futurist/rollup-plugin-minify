@@ -22,15 +22,14 @@ function rollup_plugin_minify (minifyMap) {
           // prepare opt
           delete opt.dest;
           opt.fromString = true;
-          opt.outSourceMap = opt.outSourceMap || dest + '.map';
+          var map = opt.outSourceMap = opt.outSourceMap || dest + '.map';
 
           var result = uglifyJs.minify(code, opt);
           // ensure the target folder exists
           mkdirp.sync(path.parse(dest).dir);
           fs.writeFileSync(dest, result.code, 'utf8');
 
-          var sourceMapUrl = opt.sourceMapUrl || opt.outSourceMap;
-          if(typeof sourceMapUrl=='string') { fs.writeFileSync(sourceMapUrl, result.map, 'utf8'); }
+          if(typeof map=='string') { fs.writeFileSync(map, result.map, 'utf8'); }
         }
       });
     }

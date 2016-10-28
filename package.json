@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-minify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rollup plugin to minify generated format into new minified file, with source maps, using uglify-js.",
   "main": "dist/rollup-plugin-minify.js",
   "jsnext:main": "dist/rollup-plugin-minify.mjs",
